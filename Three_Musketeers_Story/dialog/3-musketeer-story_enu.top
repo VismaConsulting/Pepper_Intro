@@ -1,0 +1,105 @@
+topic: ~3-musketeer-story()
+language: enu
+include:lexicon_enu.top
+
+concept:(louis) \RSPD=85\ \pau=500\
+    Under Louis the 14th's reign, in the great city of Paris \Pau=500\, the cardinal is plotting.
+    \RSPD=100\
+concept:(bravest) \RSPD=85\ \pau=550\
+    The bravest of the musketeers \Pau=10\ is fighting for lost causes and the love of his life.
+    \RSPD=100\
+concept:(fierce) \RSPD=85\ \pau=500\
+    During a fierce duel
+    \RSPD=100\
+concept:(defeated) \RSPD=85\ \pau=50\
+    The cardinal's armies were defeated, and order restored!
+    \RSPD=100\
+concept:(acclaimed) \RSPD=85\ \pau=500\
+    Applauded by the people
+    \RSPD=100\
+concept:(adventures) \RSPD=85\ \pau=50\
+    the musketeer continues his adventures
+    \RSPD=100\
+concept:(beloved) \RSPD=85\ \pau=500\
+    with his beloved at his side
+    \RSPD=100\
+concept:(end) ^mode(contextual) \RSPD=85\ \pau=500\
+    And they all lived happily ever after.
+    \RSPD=100\
+concept:(question) ^mode(contextual) \RSPD=85\ \pau=1000\
+    ^rand["Did you like my story?"
+            "Do you like the story of the three musketeers?"
+            "Did you enjoy the story?"]
+    \RSPD=100\
+concept:(answerYes) ^mode(contextual) \RSPD=85\
+    ^rand[    "~joyful Great! ~neutral I can't wait to tell you another story!"
+            "~joyful Awesome! ~neutral I hope, I can soon tell you another story!"]
+    \RSPD=100\
+concept:(answerNo) ^mode(contextual) \RSPD=85\ ~neutral
+    ^rand[    "Ok, no problem. Next time I'll choose a better one!"
+        "I'm sorry to hear that! Next time we'll try it with another story!"]
+    \RSPD=100\
+concept:(break1000) \pau=1000\
+concept:(break2000) \pau=2000\
+concept:(break3000) \pau=3000\
+
+u:(e:onStart)
+    ^nextProposal
+
+proposal: ^run(peppers-three-musketeers-story/animations/brass-band)
+    ~break2000
+    ^nextProposal
+
+proposal: ^start(peppers-three-musketeers-story/animations/louis)
+    ~louis
+    ^wait(peppers-three-musketeers-story/animations/louis)
+    ^nextProposal
+
+proposal: ^run(peppers-three-musketeers-story/animations/cardinal)
+    ~break3000
+    ^nextProposal
+
+proposal: ^start(peppers-three-musketeers-story/animations/bravest)
+    ~bravest
+    ^wait(peppers-three-musketeers-story/animations/bravest)
+    ^nextProposal
+
+proposal: ^run(peppers-three-musketeers-story/animations/horse-riding)
+    ~break2000
+    ^nextProposal
+
+proposal: ^start(peppers-three-musketeers-story/animations/fierce-duel)
+    ~fierce
+    ^wait(peppers-three-musketeers-story/animations/fierce-duel)
+    ~break1000
+    ^nextProposal
+
+proposal: ^start(peppers-three-musketeers-story/animations/defeated)
+    ~defeated
+    ^wait(peppers-three-musketeers-story/animations/defeated)
+    ^nextProposal
+
+proposal: ^start(peppers-three-musketeers-story/animations/acclaimed)
+    ~acclaimed
+    ^wait(peppers-three-musketeers-story/animations/acclaimed)
+    ~break1000
+    ^nextProposal
+
+proposal: ^start(peppers-three-musketeers-story/animations/adventure)
+    ~adventures
+    ~break1000
+    ~beloved
+    ^wait(peppers-three-musketeers-story/animations/adventure)
+    ^nextProposal
+
+proposal: ^run(peppers-three-musketeers-story/animations/horse-riding)
+    ~break2000
+    ^nextProposal
+
+proposal: ~end
+    $showImage=end.png
+    ~question
+    $showImage=credits.png
+    u1:(~yes) ~answerYes $onStopped=1
+    u1:(~no) ~answerNo $onStopped=1
+    u1:(e:Dialog/NotSpeaking20) $onStopped=1

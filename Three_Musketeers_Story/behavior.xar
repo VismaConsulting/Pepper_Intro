@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ChoregrapheProject xmlns="http://www.aldebaran-robotics.com/schema/choregraphe/project.xsd" xar_version="3">
+    <Box name="root" id="-1" localization="8" tooltip="Root box of Choregraphe&apos;s project. Highest level possible." x="0" y="0">
+        <bitmap>media/images/box/root.png</bitmap>
+        <script language="4">
+            <content>
+                <![CDATA[]]>
+</content>
+        </script>
+        <Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" />
+        <Input name="onStart" type="1" type_size="1" nature="2" inner="0" tooltip="Box behavior starts when a signal is received on this input." id="2" />
+        <Input name="onStop" type="1" type_size="1" nature="3" inner="0" tooltip="Box behavior stops when a signal is received on this input." id="3" />
+        <Output name="onStopped" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when box behavior is finished." id="4" />
+        <Timeline enable="0">
+            <BehaviorLayer name="behavior_layer1">
+                <BehaviorKeyframe name="keyframe1" index="1">
+                    <Diagram scale="94.3874">
+                        <Box name="Init &amp; Reset" id="7" localization="8" tooltip="Rests robot to standing pose, deactivates autonomous moves and basic awareness." x="178" y="122">
+                            <bitmap>media/images/box/box-diagram.png</bitmap>
+                            <script language="4">
+                                <content>
+                                    <![CDATA[class MyClass(GeneratedClass):
+    def __init__(self):
+        GeneratedClass.__init__(self, False)
+
+    def onLoad(self):
+        try:
+            self.postureProxy = ALProxy("ALRobotPosture")
+            self.ba = ALProxy("ALBasicAwareness")
+            self.amoves = ALProxy("ALAutonomousMoves")
+            self.motion = ALProxy("ALMotion")
+            self.tablet = ALProxy("ALTabletService")
+            self.animatedSpeech =  ALProxy("ALAnimatedSpeech")
+            self.dialog = ALProxy("ALDialog")
+        except Exception as exc:
+            self.log("Error getting required modules: %s" % str(exc))
+        # Change language to English during the application
+        self._changeLanguage("English")
+
+    def onUnload(self):
+        try:
+            self.amoves.setBackgroundStrategy("backToNeutral")
+        except Exception as exc:
+            self.log("Unable to enable breathing: %s" % str(exc))
+        try:
+            self.ba.startAwareness()
+        except Exception as exc:
+            self.log("Unable to start awareness: %s" % str(exc))
+        self.postureProxy.stopMove()
+        try:
+            self.tablet.hideImage()
+        except Exception as exc:
+            self.log("Unable to hide image: %s" % str(exc))
+        try:
+            self.animatedSpeech.setBodyLanguageModeFromStr("contextual")
+        except Exception as exc:
+            self.log("Unable to enable body language: %s" % str(exc))
+        # Reset language on exit
+        self._resetLanguage()
+
+    def _getAbsoluteUrl(self, partial_url):
+        import os
+        subPath = os.path.join(self.packageUid(), os.path.normpath(partial_url).lstrip("\\/"))
+        # We create TabletService here in order to avoid
+        # problems with connections and disconnections of the tablet during the life of the application
+        return "http://%s/apps/%s" %(self.tablet.robotIp(), subPath.replace(os.path.sep, "/"))
+
+    def _preload_images(self):
+        import os
+        from os import listdir
+        path = os.path.join(self.behaviorAbsolutePath(),"html")
+        for file in listdir(path):
+            result = self.tablet.preLoadImage(self._getAbsoluteUrl(file))
+
+    def _setup_tablet(self):
+        self.tablet.setBackgroundColor("#FFF1DD")
+        self.tablet.showImage(self._getAbsoluteUrl("musketeers_logo.png"))
+
+    def onInput_onStart(self):
+        try:
+            self.amoves.setBackgroundStrategy("none")
+        except Exception as exc:
+            self.log("Unable to disable autonomous moves: %s" % str(exc))
+        try:
+            self.ba.stopAwareness()
+        except Exception as exc:
+            self.log("Unable to stop awareness: %s" % str(exc))
+        try:
+            self.animatedSpeech.setBodyLanguageModeFromStr("disabled")
+        except Exception as exc:
+            self.log("Unable to disable body language: %s" % str(exc))
+        self._setup_tablet()
+        self._preload_images()
+        self.postureProxy.setMaxTryNumber(3)
+        result = self.postureProxy.goToPosture("Stand", 0.8)
+        if(result):
+            self.success()
+        else:
+            self.failure()
+
+    def onInput_onStop(self):
+        self.onUnload()
+
+    def _changeLanguage(self, lang):
+        self.currentLang = self.dialog.getLanguage()
+        if self.currentLang != lang:
+            self._setLanguage(lang)
+
+    def _resetLanguage(self):
+        if self.currentLang != self.dialog.getLanguage():
+            self._setLanguage(self.currentLang)
+
+    def _setLanguage(self, lang):
+        try:
+            self.dialog.setLanguage(lang)
+        except Exception as exc:
+            self.log("Unable to set language: %s" % str(exc))]]>
+</content>
+                            </script>
+                            <Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" />
+                            <Input name="onStart" type="1" type_size="1" nature="2" inner="0" tooltip="Box behavior starts when a signal is received on this input." id="2" />
+                            <Input name="onStop" type="1" type_size="1" nature="3" inner="0" tooltip="Box behavior stops when a signal is received on this input." id="3" />
+                            <Output name="failure" type="1" type_size="1" nature="1" inner="0" tooltip="Stimulated if the posture could not be reached." id="4" />
+                            <Output name="success" type="1" type_size="1" nature="1" inner="0" tooltip="Stimulated if the posture has been reached." id="5" />
+                            <Resource name="All motors" type="Lock" timeout="0" />
+                            <Resource name="Stiffness" type="Lock" timeout="0" />
+                        </Box>
+                        <Box name="Dialog" id="1" localization="8" tooltip="This box is empty and can be used to play any dialog topic from the project. Double-click it to select the associated dialog topic." x="406" y="157">
+                            <dialogFile>dialog/3-musketeer-story.dlg</dialogFile>
+                            <bitmap>media/images/box/box-dialog.png</bitmap>
+                            <script language="4">
+                                <content>
+                                    <![CDATA[]]>
+</content>
+                            </script>
+                            <Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" />
+                            <Input name="onStart" type="1" type_size="1" nature="2" inner="0" tooltip="Box behavior starts when a signal is received on this input." id="2" />
+                            <Input name="onStop" type="1" type_size="1" nature="3" inner="0" tooltip="Box behavior stops when a signal is received on this input." id="3" />
+                            <Output name="onStopped" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when box behavior is finished." id="4" />
+                            <Output name="showImage" type="3" type_size="1" nature="2" inner="0" tooltip="" id="5" />
+                        </Box>
+                        <Box name="Show Image" id="13" localization="8" tooltip="display an image on the screen&#x0A;&#x0A;V1.0.0&#x0A;" x="590" y="212">
+                            <bitmap>media/images/box/interaction/rec_movie.png</bitmap>
+                            <script language="4">
+                                <content>
+                                    <![CDATA[
+
+class MyClass(GeneratedClass):
+
+    def onLoad(self):
+        self.frameManager = None
+        try:
+            self.frameManager = ALProxy("ALFrameManager")
+        except Exception as e:
+            self.logger.error(e)
+
+    def onUnload(self):
+        pass
+
+    def _getTabletService(self):
+        tabletService = None
+        try:
+            tabletService = self.session().service("ALTabletService")
+        except Exception as e:
+            self.logger.error(e)
+        return tabletService
+
+    def _getAppName(self):
+        import os
+        if self.frameManager:
+            behaviorPath = os.path.normpath(self.frameManager.getBehaviorPath(self.behaviorId))
+            appsFolderFragment = os.path.join("PackageManager", "apps")
+            if not (appsFolderFragment in behaviorPath):
+                self.logger.error("appsFolderFragment is not in behaviorPath")
+            fragment = behaviorPath.split(appsFolderFragment, 1)[1]
+            return fragment.lstrip("\\/")
+        else:
+            self.logger.warning("No ALFrameManager")
+
+    def _getAbsoluteUrl(self, partial_url):
+        import os
+        subPath = os.path.join(self._getAppName(), os.path.normpath(partial_url).lstrip("\\/"))
+        # We create TabletService here in order to avoid
+        # problems with connections and disconnections of the tablet during the life of the application
+        return "http://%s/apps/%s" %(self._getTabletService().robotIp(), subPath.replace(os.path.sep, "/"))
+
+    def onInput_onStart(self, url):
+        # We create TabletService here in order to avoid
+        # problems with connections and disconnections of the tablet during the life of the application
+        tabletService = self._getTabletService()
+        if tabletService:
+            try:
+                if url == '':
+                    self.logger.error("URL of the image is empty")
+                if not url.startswith('http'):
+                    url = self._getAbsoluteUrl(url)
+                tabletService.showImage(url)
+            except Exception as err:
+                self.logger.error("Error during ShowImage : %s " % err)
+                self.onStopped()
+        else:
+            self.logger.warning("No ALTabletService, can't display the image.")
+            self.onStopped()
+
+    def onInput_onStop(self):
+        self.onUnload()
+        self.onStopped()]]>
+</content>
+                            </script>
+                            <Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" />
+                            <Input name="onStart" type="3" type_size="1" nature="2" inner="0" tooltip="Box behavior starts when a signal is received on this input." id="2" />
+                            <Input name="onStop" type="1" type_size="1" nature="3" inner="0" tooltip="Box behavior stops when a signal is received on this input." id="3" />
+                            <Output name="onStopped" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when box behavior is finished." id="4" />
+                        </Box>
+                        <Link inputowner="0" indexofinput="4" outputowner="7" indexofoutput="4" />
+                        <Link inputowner="0" indexofinput="4" outputowner="1" indexofoutput="4" />
+                        <Link inputowner="1" indexofinput="2" outputowner="7" indexofoutput="5" />
+                        <Link inputowner="13" indexofinput="2" outputowner="1" indexofoutput="5" />
+                        <Link inputowner="7" indexofinput="2" outputowner="0" indexofoutput="2" />
+                    </Diagram>
+                </BehaviorKeyframe>
+            </BehaviorLayer>
+        </Timeline>
+    </Box>
+</ChoregrapheProject>
