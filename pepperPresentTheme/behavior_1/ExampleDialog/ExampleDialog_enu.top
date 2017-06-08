@@ -1,0 +1,8 @@
+topic: ~ExampleDialog()
+language: enu
+
+proposal:%main
+    u1:(_*) $onStopped = $1
+    
+u:(e:onStart)
+    ^gotoReactivate(main)

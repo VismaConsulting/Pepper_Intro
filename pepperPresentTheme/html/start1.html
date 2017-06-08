@@ -1,0 +1,96 @@
+	<!DOCTYPE html>
+	<html xmlns="http://www.w3.org/1999/xhtml">
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>Pepper | Visma Consulting</title>
+		<meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+		<meta name="Resource-type" content="Document" />
+
+		<link rel="stylesheet" type="text/css" href="js/jquery.pagepiling.css" />
+		<link rel="stylesheet" type="text/css" href="css/style.css" />
+		<link rel="stylesheet" type="text/css" href="css/list-style.css" />
+
+		<script src="js/jquery.min.js"></script>
+		<script src="js/jquery.playSound.js"></script>
+
+		<script type="text/javascript" src="js/papaparse.js"></script>
+		<script type="text/javascript" src="js/ownList.js"></script>
+
+		<script type="text/javascript" src="js/jquery.pagepiling.min.js"></script>
+		<script type="text/javascript" src="js/searchLive.js"></script>
+		<script src="http://198.18.0.1/libs/qimessaging/1.0/qimessaging.js"></script>
+		<script src="js/pepperScriptMeeting.js"></script>
+		<script src="js/typed.js"></script>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				$("html").css("display", "none");
+				$("html").fadeIn(1000);
+				sayAnimatedSpeech("Welcome to Visma Consulting, I'm Pepper. What is your name?");
+				recogniseName();
+				/*
+				* Plugin intialization
+				*/
+				$('#pagepiling').pagepiling({
+					direction: 'horizontal',
+					menu: '#menu',
+					anchors: ['page1', 'page2', 'page3', 'page4'],
+					sectionsColor: ['white', 'white','white'],
+					navigation: {
+						'tooltips': ['Page 1', 'Page 2', 'Page 3', 'Page 4']
+					},
+					afterRender: function(){
+						$('#pp-nav').addClass('custom');
+					},
+					afterLoad: function(anchorLink, index){
+						if(index>1){
+							$('#pp-nav').removeClass('custom');
+						}else{
+							$('#pp-nav').addClass('custom');
+						} if( index==2){
+							//sayAnimatedSpeech("Notification about your arrival has been sent!");
+							setTimeout(function myFunction() {
+								window.location.replace("#page3");
+							}, 2000)
+						} if( index==3){
+							sayAnimatedSpeech("Can I take a picture of you?");
+							takePicture();
+						}
+					}
+				});
+			});
+		</script>
+
+	</head>
+	<body>
+
+		<div id="pagepiling">
+			<div class="section" id="section1">
+			<div class="space-small"></div>
+			<img src="img/vismalogo.jpg" width="25%">
+				
+				<div class="header-title-black" id="notificationTittle">Welcome to Visma Consulting, I'm Pepper</div>
+				<div class="header-content-black">Welcome to Visma Consulting, I'm Pepper</div>
+				<div class="content-start" align="center">
+			</div>
+			</div>
+
+			<div class="section" id="section2">
+			<div class="space-small"></div>
+			<img src="img/vismalogo.jpg" width="25%">
+			<div class="header-content-black" id="RecognizedName">Hello ...</div>
+			</div>
+			
+			<div class="section" id="section3">
+			<div class="space-small"></div>
+			<img src="img/vismalogo.jpg" width="25%">
+			<div class="header-content-black" id="RecognizedName"> Can i take a picture of you? </div>
+			</div>
+
+
+
+
+		</div>
+
+	</body>
+	</html>
