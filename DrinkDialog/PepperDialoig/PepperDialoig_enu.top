@@ -1,0 +1,22 @@
+topic: ~PepperDialoig()
+language: enu
+
+
+concept:(soft_drink) [soda juice]
+concept:(hard_drink) [whisky beer]
+
+concept:(drinks) [_~soft_drink _~hard_drink]
+
+proposal:%drink
+    u1:(yes) What would you like? I have soft and hard drinks. I can also suggest something.
+        u2:(soft) What do you want? I have soda and juice.
+            u3:(_~soft_drink) $1 is for pussies $Handwave=1
+        u2:(hard) I have whisky and beer.
+            u3:(_~hard_drink) i love $1 Here you are! $sax=1
+        u2:(suggest) I suggest ^rand[~drinks]. Do you want that? $sax=1 
+    u1:(no) Thats too bad. See you next time. 
+    #u1:(_~hard_drink) i love $1 Here you are! $sax=1
+
+u:(e:onStart)
+    Would you like something to drink?
+    ^gotoReactivate(drink)
